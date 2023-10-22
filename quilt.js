@@ -1,19 +1,17 @@
-const TILE_SIZE = 45;
-
-function generateTiles() {
+function generateTiles(tile_size) {
   let tile_array = [];
 
-  let canvas = new OffscreenCanvas(TILE_SIZE, TILE_SIZE);
+  let canvas = new OffscreenCanvas(tile_size, tile_size);
   let context = canvas.getContext("2d");
 
   // A
   context.fillStyle = "white";
-  context.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+  context.fillRect(0, 0, tile_size, tile_size);
 
   let path = new Path2D();
   path.moveTo(0, 0);
-  path.lineTo(TILE_SIZE, TILE_SIZE);
-  path.lineTo(0, TILE_SIZE);
+  path.lineTo(tile_size, tile_size);
+  path.lineTo(0, tile_size);
   path.closePath();
   context.fillStyle = "black";
   context.fill(path);
@@ -22,12 +20,12 @@ function generateTiles() {
 
   // B
   context.fillStyle = "white";
-  context.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+  context.fillRect(0, 0, tile_size, tile_size);
 
   path = new Path2D();
   path.moveTo(0, 0);
-  path.lineTo(0, TILE_SIZE);
-  path.lineTo(TILE_SIZE, 0);
+  path.lineTo(0, tile_size);
+  path.lineTo(tile_size, 0);
   path.closePath();
   context.fillStyle = "black";
   context.fill(path);
@@ -36,12 +34,12 @@ function generateTiles() {
 
   // C
   context.fillStyle = "white";
-  context.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+  context.fillRect(0, 0, tile_size, tile_size);
 
   path = new Path2D();
   path.moveTo(0, 0);
-  path.lineTo(TILE_SIZE, TILE_SIZE);
-  path.lineTo(TILE_SIZE, 0);
+  path.lineTo(tile_size, tile_size);
+  path.lineTo(tile_size, 0);
   path.closePath();
   context.fillStyle = "black";
   context.fill(path);
@@ -50,12 +48,12 @@ function generateTiles() {
 
   // D
   context.fillStyle = "white";
-  context.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+  context.fillRect(0, 0, tile_size, tile_size);
 
   path = new Path2D();
-  path.moveTo(TILE_SIZE, 0);
-  path.lineTo(TILE_SIZE, TILE_SIZE);
-  path.lineTo(0, TILE_SIZE);
+  path.moveTo(tile_size, 0);
+  path.lineTo(tile_size, tile_size);
+  path.lineTo(0, tile_size);
   path.closePath();
   context.fillStyle = "black";
   context.fill(path);
@@ -65,8 +63,6 @@ function generateTiles() {
   return tile_array;
 }
 
-const tiles = generateTiles();
-
 function generateQuilt() {
   let message = document.getElementById("message").value;
   let width = parseInt(document.getElementById("width").value);
@@ -74,17 +70,19 @@ function generateQuilt() {
 }
 
 function generateQuiltFromArray(array, width) {
-  let quilt = document.getElementById("quilt");
-  let context = quilt.getContext("2d");
-  context.clearRect(0, 0, quilt.height, quilt.width);
+  let canvas = document.getElementById("canvas");
+  let context = canvas.getContext("2d");
+  context.clearRect(0, 0, canvas.height, canvas.width);
 
-  const horizontal_offset = Math.floor((quilt.width - TILE_SIZE * width) / 2);
+  const tile_size = Math.floor(canvas.width / 16);
+
+  const horizontal_offset = Math.floor((canvas.width - tile_size * width) / 2);
 
   for (i = 0; i < array.length; i++) {
     context.putImageData(
       tiles[array[i]],
-      horizontal_offset + (i % width) * TILE_SIZE,
-      Math.floor(i / width) * TILE_SIZE
+      horizontal_offset + (i % width) * tile_size,
+      Math.floor(i / width) * tile_size
     );
   }
 }
@@ -106,3 +104,22 @@ function generateQuiltFromString(text, width) {
   }
   generateQuiltFromArray(array, width);
 }
+
+function resizeCanvas() {
+  let quilt = document.getElementById("quilt");
+  const width = quilt.offsetWidth;
+  const canvas = document.getElementById("canvas");
+
+  tiles = generateTiles(Math.floor(width / 16));
+
+  canvas.width = width;
+  canvas.height = 1.5 * width;
+}
+
+let tiles = generateTiles(45);
+resizeCanvas();
+
+addEventListener("resize", (event) => {
+  resizeCanvas();
+  generateQuilt();
+});

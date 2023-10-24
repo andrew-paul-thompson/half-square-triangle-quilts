@@ -74,7 +74,9 @@ function generateQuiltFromArray(array, width) {
   let context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.height, canvas.width);
 
-  const tile_size = Math.floor(canvas.width / 16);
+  let width_in_tiles = parseInt(document.getElementById("width").value);
+
+  const tile_size = Math.floor(canvas.width / width_in_tiles);
 
   const horizontal_offset = Math.floor((canvas.width - tile_size * width) / 2);
 
@@ -110,13 +112,14 @@ function resizeCanvas() {
   const width = quilt.offsetWidth;
   const canvas = document.getElementById("canvas");
 
-  tiles = generateTiles(Math.floor(width / 16));
+  let width_in_tiles = parseInt(document.getElementById("width").value);
 
   canvas.width = width;
   canvas.height = 1.5 * width;
+
+  tiles = generateTiles(Math.floor(width / width_in_tiles));
 }
 
-let tiles = generateTiles(45);
 resizeCanvas();
 
 addEventListener("resize", (event) => {
